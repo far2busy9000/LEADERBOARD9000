@@ -1,0 +1,1666 @@
+<!doctype html>
+<html lang="en" class="h-full">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="LEADERBOARD9000" />
+    <meta name="theme-color" content="#0a0a0a" />
+    <link rel="manifest" href="manifest.json" />
+    <link rel="apple-touch-icon" href="icon-192.svg" />
+    <title>LEADERBOARD9000 — Offline Tracker</title>
+    
+    <!-- Immediate theme restoration script to prevent flashing -->
+    <script>
+      try {
+        const savedTheme = localStorage.getItem('golf_scorecard_theme') || 'volt';
+        document.documentElement.setAttribute('data-theme', savedTheme);
+      } catch (e) {}
+    </script>
+
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              volt: 'var(--color-volt)',
+              'volt-hover': 'var(--color-volt-hover)',
+              cyberdark: 'var(--color-cyberdark)',
+              cybercard: 'var(--color-cybercard)',
+              'cybercard-hover': 'var(--color-cybercard-hover)'
+            },
+            fontFamily: {
+              sans: ['Inter', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+              mono: ['JetBrains Mono', 'ui-monospace', 'monospace']
+            }
+          }
+        }
+      }
+    </script>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Robust Offline-Fallback stylesheet to support un-sandboxed iPhone file:/// access -->
+    <style>
+      :root {
+        --color-volt: #ccff00;
+        --color-volt-hover: #bdff00;
+        --color-cyberdark: #0a0b0a;
+        --color-cybercard: #121412;
+        --color-cybercard-hover: #191c19;
+        --theme-glow: rgba(204, 255, 0, 0.25);
+      }
+      [data-theme="fairway"] {
+        --color-volt: #10b981;
+        --color-volt-hover: #059669;
+        --color-cyberdark: #061f12;
+        --color-cybercard: #0c3820;
+        --color-cybercard-hover: #114c2c;
+        --theme-glow: rgba(16, 185, 129, 0.25);
+      }
+      [data-theme="light"] {
+        --color-volt: #0f172a;
+        --color-volt-hover: #1e293b;
+        --color-cyberdark: #f8fafc;
+        --color-cybercard: #ffffff;
+        --color-cybercard-hover: #f1f5f9;
+        --theme-glow: rgba(15, 23, 42, 0.08);
+      }
+
+      /* Global light theme overrides for perfect contrast and readability */
+      [data-theme="light"] body {
+        color: #0f172a !important;
+      }
+      [data-theme="light"] .text-white,
+      [data-theme="light"] h1,
+      [data-theme="light"] h2,
+      [data-theme="light"] h3,
+      [data-theme="light"] h4,
+      [data-theme="light"] h5,
+      [data-theme="light"] h6,
+      [data-theme="light"] td,
+      [data-theme="light"] th,
+      [data-theme="light"] .font-black {
+        color: #0f172a !important;
+      }
+      [data-theme="light"] p,
+      [data-theme="light"] .text-zinc-350,
+      [data-theme="light"] .text-zinc-300,
+      [data-theme="light"] .text-zinc-400 {
+        color: #334155 !important;
+      }
+      [data-theme="light"] .text-zinc-450,
+      [data-theme="light"] .text-zinc-500,
+      [data-theme="light"] .text-zinc-600 {
+        color: #475569 !important;
+      }
+      [data-theme="light"] .text-zinc-650,
+      [data-theme="light"] .text-zinc-700 {
+        color: #64748b !important;
+      }
+      [data-theme="light"] .text-volt {
+        color: #15803d !important;
+      }
+      [data-theme="light"] .bg-cybercard {
+        background-color: #ffffff !important;
+        border-color: #cbd5e1 !important;
+      }
+      [data-theme="light"] .bg-zinc-950,
+      [data-theme="light"] .bg-zinc-955,
+      [data-theme="light"] .bg-zinc-905,
+      [data-theme="light"] #live-scorecard-table-scroll,
+      [data-theme="light"] #holes-horizontal-scroll {
+        background-color: #f1f5f9 !important;
+      }
+      [data-theme="light"] .border-zinc-800,
+      [data-theme="light"] .border-zinc-805,
+      [data-theme="light"] .border-zinc-850,
+      [data-theme="light"] .border-zinc-855,
+      [data-theme="light"] .border-zinc-900,
+      [data-theme="light"] .border-zinc-950 {
+        border-color: #cbd5e1 !important;
+      }
+      [data-theme="light"] input {
+        background-color: #ffffff !important;
+        border-color: #cbd5e1 !important;
+        color: #0f172a !important;
+      }
+      [data-theme="light"] input::placeholder {
+        color: #94a3b8 !important;
+      }
+      [data-theme="light"] .bg-zinc-900,
+      [data-theme="light"] .bg-zinc-910 {
+        background-color: #f8fafc !important;
+        border-color: #cbd5e1 !important;
+        color: #0f172a !important;
+      }
+      [data-theme="light"] .bg-zinc-900:hover,
+      [data-theme="light"] .bg-zinc-910:hover {
+        background-color: #f1f5f9 !important;
+      }
+      [data-theme="light"] button {
+        color: #0f172a !important;
+      }
+      [data-theme="light"] button svg,
+      [data-theme="light"] button span.arrow {
+        stroke: #0f172a !important;
+        color: #0f172a !important;
+      }
+      [data-theme="light"] button.bg-volt,
+      [data-theme="light"] #btn-start-game,
+      [data-theme="light"] #hlight-next-hole-cta {
+        background-color: #0f172a !important;
+        color: #ffffff !important;
+        border-color: #0f172a !important;
+      }
+      [data-theme="light"] button.bg-volt:hover,
+      [data-theme="light"] #btn-start-game:hover,
+      [data-theme="light"] #hlight-next-hole-cta:hover {
+        background-color: #1e293b !important;
+      }
+      [data-theme="light"] button.bg-volt svg,
+      [data-theme="light"] #btn-start-game svg {
+        stroke: #ffffff !important;
+      }
+      [data-theme="light"] button:disabled,
+      [data-theme="light"] button:disabled svg {
+        color: #94a3b8 !important;
+        background-color: #f1f5f9 !important;
+        stroke: #94a3b8 !important;
+        border-color: #e2e8f0 !important;
+      }
+      [data-theme="light"] .text-rose-505,
+      [data-theme="light"] .text-red-400,
+      [data-theme="light"] .text-rose-450 {
+        color: #ef4444 !important;
+      }
+      [data-theme="light"] .bg-rose-955\/10 {
+        background-color: #fee2e2 !important;
+      }
+      [data-theme="light"] .bg-amber-955\/10,
+      [data-theme="light"] .bg-amber-955\/40 {
+        background-color: #fef3c7 !important;
+      }
+      [data-theme="light"] .bg-green-950\/40,
+      [data-theme="light"] .bg-green-950\/20 {
+        background-color: #dcfce7 !important;
+      }
+      [data-theme="light"] .bg-indigo-950\/40,
+      [data-theme="light"] .bg-indigo-950\/20 {
+        background-color: #e0e7ff !important;
+      }
+      [data-theme="light"] .bg-zinc-950\/20 {
+        background-color: #f8fafc !important;
+      }
+
+      [data-theme="light"] .border-volt,
+      [data-theme="light"] button.border-volt,
+      [data-theme="light"] .bg-zinc-900.border-volt,
+      [data-theme="light"] .bg-zinc-950.border-volt {
+        background-color: #0f172a !important;
+        border-color: #0f172a !important;
+        color: #ffffff !important;
+      }
+
+      [data-theme="light"] .border-volt *,
+      [data-theme="light"] button.border-volt * {
+        color: #ffffff !important;
+      }
+
+      /* Perfect contrast and readability for winner score cell under light theme */
+      [data-theme="light"] td.winner-score-cell,
+      [data-theme="light"] td.bg-volt {
+        background-color: #0f172a !important;
+        color: #ffffff !important;
+      }
+
+      [data-theme="light"] td.winner-score-cell span,
+      [data-theme="light"] td.winner-score-cell *,
+      [data-theme="light"] td.bg-volt span,
+      [data-theme="light"] td.bg-volt * {
+        color: #94a3b8 !important;
+      }
+
+      body {
+        font-family: 'Inter', system-ui, -apple-system, sans-serif;
+        background-color: var(--color-cyberdark);
+        color: #ffffff;
+        -webkit-tap-highlight-color: transparent;
+        transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+      }
+      .cybercard {
+        background-color: var(--color-cybercard);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        transition: background-color 0.2s ease, border-color 0.2s ease;
+      }
+      input[type="number"]::-webkit-inner-spin-button,
+      input[type="number"]::-webkit-outer-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+      }
+      ::-webkit-scrollbar {
+        width: 6px;
+        height: 6px;
+      }
+      ::-webkit-scrollbar-track {
+        background: var(--color-cyberdark);
+      }
+      ::-webkit-scrollbar-thumb {
+        background: rgba(255, 255, 255, 0.15);
+        border-radius: 4px;
+      }
+      ::-webkit-scrollbar-thumb:hover {
+        background: var(--color-volt);
+      }
+    </style>
+  </head>
+  <body class="bg-cyberdark text-white min-h-screen flex flex-col justify-between selection:bg-volt/30">
+
+    <!-- Header Terminal -->
+    <header class="sticky top-0 z-40 bg-zinc-950 border-b border-zinc-900 py-3.5 px-4 md:px-8 shadow-lg">
+      <div class="max-w-7xl mx-auto flex items-center justify-between gap-4">
+        
+        <div class="flex items-center gap-2.5">
+          <div class="w-8 h-8 rounded-lg bg-volt text-[#0a0b0a] flex items-center justify-center font-black text-sm shadow-[0_0_10px_rgba(204,255,0,0.25)] select-none animate-pulse">
+            9K
+          </div>
+          <div>
+            <h1 class="font-sans font-black text-lg text-white tracking-tight uppercase leading-none">
+              LEADERBOARD<span class="text-volt">9000</span>
+            </h1>
+            <p class="text-[9px] font-mono font-bold text-zinc-500 uppercase tracking-widest mt-0.5">
+              PORTABLE OFFLINE EDITION
+            </p>
+          </div>
+        </div>
+
+        <div class="flex items-center gap-3">
+          <!-- Dynamic theme pills switcher -->
+          <div class="flex items-center gap-1.5 bg-zinc-900 border border-zinc-850 p-1.5 rounded-lg select-none">
+            <button onclick="setTheme('volt')" class="w-5 h-5 rounded bg-[#ccff00] border border-white/10 hover:scale-105 active:scale-95 transition-all cursor-pointer" title="Cyber Volt" aria-label="Cyber Volt Theme"></button>
+            <button onclick="setTheme('fairway')" class="w-5 h-5 rounded bg-[#10b981] border border-white/10 hover:scale-105 active:scale-95 transition-all cursor-pointer" title="Classic Fairway" aria-label="Classic Fairway Theme"></button>
+            <button onclick="setTheme('light')" class="w-5 h-5 rounded bg-[#ffffff] border border-white/10 hover:scale-105 active:scale-95 transition-all cursor-pointer" title="Sleek Light" aria-label="Sleek Light Theme"></button>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Navigation Tab Links -->
+    <nav class="bg-zinc-950 px-4 py-2 border-b border-zinc-900 shadow-sm sticky top-[57px] z-30">
+      <div class="max-w-7xl mx-auto">
+        <div class="flex bg-zinc-900 border border-zinc-850 p-1 rounded-xl gap-1 w-full max-w-lg mx-auto">
+          
+          <button id="nav-btn-setup" onclick="switchTab('setup')" class="flex-1 py-2.5 px-3 rounded-lg text-xs font-black uppercase tracking-wider transition-all flex items-center justify-center gap-1.5 select-none text-zinc-400 hover:text-white cursor-pointer h-10">
+            SETUP
+          </button>
+
+          <button id="nav-btn-play" onclick="switchTab('play')" class="flex-1 py-2.5 px-3 rounded-lg text-xs font-black uppercase tracking-wider transition-all flex items-center justify-center gap-1.5 relative select-none text-zinc-400 hover:text-white cursor-pointer h-10">
+            RECORD
+            <span id="nav-badge-live" class="hidden absolute top-1.5 right-2 w-1.5 h-1.5 bg-volt rounded-full border border-zinc-950 animate-ping"></span>
+          </button>
+
+          <button id="nav-btn-stats" onclick="switchTab('stats')" class="flex-1 py-2.5 px-3 rounded-lg text-xs font-black uppercase tracking-wider transition-all flex items-center justify-center gap-1.5 select-none text-zinc-400 hover:text-white cursor-pointer h-10">
+            STATS
+          </button>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Main Content Panels Container -->
+    <main class="flex-grow max-w-7xl w-full mx-auto p-4 md:p-6 flex flex-col justify-start">
+      
+      <!-- -------------------- SETUP TAB -------------------- -->
+      <section id="panel-setup" class="hidden space-y-6">
+        
+        <!-- Live game active banner -->
+        <div id="setup-resume-banner" class="hidden flex-col sm:flex-row items-center justify-between p-4 bg-zinc-900 border border-volt/20 rounded-xl text-white gap-4 shadow-md">
+          <div class="text-center sm:text-left space-y-1">
+            <span class="font-mono text-[9px] font-black uppercase tracking-wider text-volt block">⚡ LIVE MATCH IN PROGRESS ⚡</span>
+            <h4 id="setup-resume-course" class="font-sans font-black text-lg text-white">Augusta National</h4>
+            <p id="setup-resume-players" class="text-xs text-zinc-400">Roster: Jennifer, Alex</p>
+          </div>
+          <button onclick="switchTab('play')" class="w-full sm:w-auto px-4 py-2.5 text-xs font-black text-black bg-volt hover:bg-volt-hover rounded-lg select-none uppercase transition-colors cursor-pointer">
+            Resume Match Scorer
+          </button>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+          
+          <!-- Course Parameters (Left Column) -->
+          <div class="lg:col-span-5">
+            <div class="p-4 sm:p-5 bg-cybercard border border-[#2d332d] rounded-xl space-y-5 shadow-lg">
+              
+              <div class="flex items-center gap-2.5 text-volt border-b border-zinc-800 pb-3">
+                <span class="text-base font-bold">⛳</span>
+                <h3 class="font-sans font-black text-white text-xs uppercase tracking-wider">Course config</h3>
+              </div>
+
+              <!-- Input course name -->
+              <div class="space-y-2">
+                <label class="block text-xs sm:text-sm font-extrabold text-zinc-350 uppercase tracking-wider">Course Name <span class="text-rose-500 font-extrabold">*</span></label>
+                <input id="input-course-name" type="text" placeholder="E.g. Mount Lofty, West Beach..." class="w-full h-12 px-3.5 placeholder:text-zinc-655 bg-zinc-950 border border-zinc-800 rounded-xl focus:outline-none focus:border-volt text-white text-sm sm:text-base font-bold" />
+              </div>
+
+              <!-- Course presets list -->
+              <div id="box-course-presets" class="hidden space-y-2">
+                <label class="block text-xs font-bold text-zinc-455 uppercase tracking-wider">Select Recently Played Course</label>
+                <div id="list-course-presets" class="flex flex-wrap gap-2"></div>
+              </div>
+
+              <!-- Distance selection -->
+              <div class="space-y-2">
+                <label class="block text-xs sm:text-sm font-extrabold text-[#94a3b8] uppercase tracking-wider">Holes Count</label>
+                <div class="grid grid-cols-2 gap-2.5">
+                  <button id="btn-holes-9" onclick="setHoles(9)" type="button" class="py-2 px-3.5 font-sans rounded-xl border transition-all flex flex-col items-center justify-center bg-zinc-950 border-zinc-800 text-zinc-400 cursor-pointer text-center h-14">
+                    <span class="text-sm sm:text-base font-black">9 Holes</span>
+                    <span class="text-[9px] sm:text-xs font-mono text-zinc-500 mt-0.5 uppercase tracking-wider">Half Round</span>
+                  </button>
+                  <button id="btn-holes-18" onclick="setHoles(18)" type="button" class="py-2 px-3.5 font-sans rounded-xl border transition-all flex flex-col items-center justify-center bg-zinc-950 border-zinc-805 text-zinc-400 cursor-pointer text-center h-14">
+                    <span class="text-sm sm:text-base font-black">18 Holes</span>
+                    <span class="text-[9px] sm:text-xs font-mono text-zinc-500 mt-0.5 uppercase tracking-wider">Full Round</span>
+                  </button>
+                </div>
+
+                <!-- Arbitrary random stepper layout -->
+                <div class="flex items-center justify-between p-3 bg-zinc-950 border border-zinc-900 rounded-xl mt-2.5 gap-2">
+                  <div class="flex flex-col">
+                    <span class="text-xs font-extrabold text-white uppercase tracking-wider">Custom Layout</span>
+                    <span class="text-[10px] text-zinc-500 font-semibold font-mono">Any random layout count</span>
+                  </div>
+                  <div class="flex items-center gap-1 bg-zinc-900 border border-zinc-800 p-1 rounded-xl shrink-0">
+                    <button type="button" onclick="adjustSetupHoles(-1)" class="w-8 h-8 rounded-lg bg-zinc-950 hover:bg-zinc-800 text-white font-black text-sm flex items-center justify-center transition-colors active:scale-90 select-none cursor-pointer">─</button>
+                    <input id="input-custom-holes" type="number" min="1" max="100" value="18" onchange="applyCustomHoles(this.value)" class="w-12 bg-transparent text-center text-sm font-sans font-black text-volt focus:outline-none font-mono" />
+                    <button type="button" onclick="adjustSetupHoles(1)" class="w-8 h-8 rounded-lg bg-zinc-950 hover:bg-zinc-800 text-white font-black text-sm flex items-center justify-center transition-colors active:scale-90 select-none cursor-pointer">┼</button>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Scoring styles selection -->
+              <div class="space-y-2 pt-3 border-t border-zinc-900">
+                <label class="block text-xs sm:text-sm font-extrabold text-[#94a3b8] uppercase tracking-wider font-sans">Select Scoring Style</label>
+                <div class="grid grid-cols-2 gap-2.5">
+                  <button id="btn-style-standard" onclick="setMiniGolf(false)" type="button" class="py-2.5 px-3 font-sans rounded-xl border transition-all flex flex-col items-center justify-center bg-zinc-900 border-volt text-volt cursor-pointer text-center h-12">
+                    <span class="text-sm font-black">Standard Golf</span>
+                    <span class="text-[9px] font-mono text-zinc-500 mt-0.5">Par 4s Default</span>
+                  </button>
+                  <button id="btn-style-minigolf" onclick="setMiniGolf(true)" type="button" class="py-2.5 px-3 font-sans rounded-xl border transition-all flex flex-col items-center justify-center bg-zinc-950 border-zinc-800 text-zinc-400 cursor-pointer text-center h-12">
+                    <span class="text-sm font-black">Mini-Golf ⛳</span>
+                    <span class="text-[9px] font-mono text-zinc-550 mt-0.5">Par 2s Default</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Squad Roster (Right Column) -->
+          <div class="lg:col-span-7">
+            <div class="p-4 sm:p-5 bg-cybercard border border-[#2d332d] rounded-xl space-y-4 shadow-lg">
+              
+              <div class="flex items-center justify-between border-b border-zinc-900 pb-3">
+                <div class="flex items-center gap-2.5 text-volt">
+                  <span class="text-base font-bold">👥</span>
+                  <h3 class="font-sans font-black text-white text-xs uppercase tracking-wider">Squad roster</h3>
+                </div>
+                <span id="label-players-count" class="text-[11px] font-mono font-black text-volt bg-zinc-900 border border-zinc-800 px-3 py-1 rounded-full uppercase tracking-wider">1 ACTIVE</span>
+              </div>
+
+              <!-- Manual Entry form only has name! (Handicap inputs completely purged) -->
+              <div class="space-y-4">
+                <div class="flex flex-col sm:flex-row gap-2.5">
+                  <div class="flex-1 space-y-2">
+                    <label class="block text-xs sm:text-sm font-extrabold text-zinc-350 uppercase tracking-wider">Add New Player</label>
+                    <input id="input-player-name" placeholder="Enter player name..." type="text" class="w-full h-12 px-3.5 bg-zinc-950 border border-zinc-800 rounded-xl focus:outline-none focus:border-volt text-white text-sm sm:text-base font-bold" />
+                  </div>
+                  <div class="flex items-end">
+                    <button onclick="addPlayerManual()" type="button" id="btn-add-player" class="w-full sm:w-auto h-12 px-6 flex items-center justify-center bg-volt hover:bg-volt-hover text-black text-xs sm:text-sm font-black rounded-xl uppercase transition-all select-none cursor-pointer">
+                      Add Player
+                    </button>
+                  </div>
+                </div>
+
+                <!-- Selected dynamic rosters box -->
+                <div id="box-recent-players" class="hidden p-3.5 bg-zinc-950 rounded-xl border border-zinc-900 space-y-2">
+                  <span class="block text-xs font-bold text-zinc-455 uppercase tracking-wider">Select from Recent Players:</span>
+                  <div id="list-recent-players" class="flex flex-wrap gap-2"></div>
+                </div>
+
+                <!-- Squad active players nodes list -->
+                <div id="list-squad-players" class="space-y-2.5 max-h-[260px] overflow-y-auto pr-1"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="pt-3">
+          <button onclick="launchMatchSession()" class="w-full py-4 px-6 bg-volt hover:bg-volt-hover text-black text-sm sm:text-base font-black rounded-xl shadow-[0_0_20px_rgba(204,255,0,0.2)] tracking-wider uppercase font-sans flex items-center justify-center gap-2 select-none cursor-pointer">
+            START YOUR GAME ⛳
+          </button>
+        </div>
+      </section>
+
+      <!-- -------------------- PLAY TAB -------------------- -->
+      <section id="panel-play" class="hidden space-y-5">
+        
+        <!-- Scorecard compact navigation -->
+        <div class="p-4 bg-cybercard border border-[#2d332d] rounded-xl shadow-md space-y-4">
+          <div class="flex items-center justify-between">
+            <span id="play-title-course" class="text-base font-black uppercase tracking-wider text-volt">Augusta National</span>
+            <span id="play-title-date" class="text-xs sm:text-sm text-zinc-455 font-mono font-bold uppercase">Jun 06, 2026</span>
+          </div>
+
+          <!-- Touch scale horizontal carousel -->
+          <div class="overflow-x-auto select-none">
+            <div id="play-holes-carousel" class="flex gap-2 pb-1.5" style="min-width: max-content;"></div>
+          </div>
+
+          <!-- Hole and Par switcher -->
+          <div class="flex flex-col sm:flex-row items-center justify-between p-3 bg-zinc-950 border border-zinc-900 rounded-xl gap-3">
+            <div class="flex gap-2 w-full sm:w-auto justify-between sm:justify-start">
+              <button onclick="changeActiveHole(-1)" class="px-4 h-11 border border-zinc-800 rounded-xl hover:bg-zinc-900 text-zinc-200 font-sans text-xs sm:text-sm font-black flex items-center justify-center gap-1.5 bg-zinc-900 select-none cursor-pointer">
+                ← Prev
+              </button>
+              <div id="play-active-hole-indicator" class="flex items-center justify-center font-mono font-black text-white text-base sm:text-lg uppercase tracking-wider">
+                Hole 1/18
+              </div>
+              <button onclick="changeActiveHole(1)" class="px-4 h-11 border border-zinc-800 rounded-xl hover:bg-zinc-900 text-zinc-200 font-sans text-xs sm:text-sm font-black flex items-center justify-center gap-1.5 bg-zinc-900 select-none cursor-pointer">
+                Next →
+              </button>
+            </div>
+
+            <div class="flex items-center gap-2.5 w-full sm:w-auto justify-between sm:justify-end border-t sm:border-t-0 pt-3 sm:pt-0 border-zinc-900">
+              <span id="label-par-hole" class="text-xs sm:text-sm font-extrabold text-zinc-400 uppercase tracking-wider">Par for Hole 1:</span>
+              <div class="flex items-center gap-1.5 bg-zinc-900 border border-zinc-805 p-1 rounded-xl">
+                <button onclick="updateActivePar(-1)" class="w-9 h-9 rounded-lg bg-zinc-950 hover:bg-zinc-800 text-white flex items-center justify-center font-extrabold text-sm cursor-pointer select-none">─</button>
+                <span id="play-par-value" class="w-9 text-center font-mono font-black text-sm sm:text-base text-white">4</span>
+                <button onclick="updateActivePar(1)" class="w-9 h-9 rounded-lg bg-zinc-950 hover:bg-zinc-800 text-white flex items-center justify-center font-extrabold text-sm cursor-pointer select-none">┼</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Scores entries container -->
+        <div id="play-players-list" class="space-y-3"></div>
+
+        <!-- Safety reminder -->
+        <div class="flex items-center gap-1.5 text-xs text-zinc-550 font-mono w-full justify-center select-none pt-1">
+          <span>🛡️</span>
+          <span>Saves instantly to persistent system memory</span>
+        </div>
+
+        <!-- Touch intuitive next controls -->
+        <div id="play-submission-block" class="pt-2"></div>
+      </section>
+
+      <!-- -------------------- STATS TAB -------------------- -->
+      <section id="panel-stats" class="hidden space-y-6">
+        
+        <!-- Live leaderboard celebration card -->
+        <div id="stats-winner-box" class="hidden p-4 sm:p-5 bg-zinc-950 border-2 border-volt/40 rounded-xl shadow-xl space-y-4"></div>
+
+        <!-- Live active round grid tracker -->
+        <div id="stats-live-scorecard" class="hidden p-4 bg-cybercard border border-zinc-850 rounded-xl shadow-md space-y-3"></div>
+
+        <!-- Cumulative metrics overview if history exists -->
+        <div id="stats-cumulative-box" class="hidden p-4 bg-cybercard border border-zinc-855 rounded-xl shadow-md space-y-4"></div>
+
+        <!-- Tournaments archive cards collection -->
+        <div class="space-y-4">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-zinc-800 pb-2">
+            <div class="flex items-center gap-2">
+              <span class="text-sm">🏆</span>
+              <h3 class="font-sans font-black text-white text-sm uppercase tracking-wider">Tournament vault archives</h3>
+            </div>
+            
+            <button id="btn-export-all-history" onclick="exportHistoricalCSV()" class="hidden px-3 h-9 text-xs font-black text-zinc-300 bg-zinc-900 border border-zinc-800 hover:text-white rounded-lg transition-all flex items-center justify-center gap-2 uppercase font-mono tracking-wider font-bold cursor-pointer">
+              Download History CSV
+            </button>
+          </div>
+
+          <div id="list-saved-history-grid" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
+        </div>
+      </section>
+    </main>
+
+    <!-- Footer Action Modules -->
+    <footer class="bg-zinc-950 border-t border-zinc-900 py-4 px-4 md:px-8 mt-10">
+      <div class="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-3">
+        
+        <div class="text-[9px] text-zinc-650 font-mono text-center sm:text-left select-none uppercase font-extrabold">
+          © 2026 LEADERBOARD9000. PORTABLE STAND-ALONE DATA MODULE.
+        </div>
+
+        <div class="flex items-center gap-2">
+          <button onclick="promptMasterErase()" class="px-3 py-1.5 text-[9px] font-black text-red-400 hover:text-red-500 hover:bg-red-950/20 rounded bg-transparent border border-red-900/30 h-8 uppercase cursor-pointer transition-colors">
+            Reset Database
+          </button>
+        </div>
+      </div>
+    </footer>
+
+    <!-- Confirm Dialog popups UI -->
+    <div id="modal-container" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-xs select-none">
+      <div class="w-full max-w-sm p-5 bg-zinc-950 border border-zinc-850 rounded-xl shadow-2xl space-y-4">
+        <h4 id="modal-title" class="font-sans font-black text-sm text-white uppercase tracking-wider">Alert</h4>
+        <p id="modal-desc" class="text-xs text-zinc-400 leading-relaxed font-sans"></p>
+        <div class="flex gap-2.5 pt-2 font-sans text-xs">
+          <button id="modal-btn-confirm" class="flex-1 py-3 font-black text-black bg-volt hover:bg-volt-hover rounded-lg uppercase tracking-wider cursor-pointer transition-transform active:scale-[0.98]"></button>
+          <button id="modal-btn-cancel" onclick="closeModal()" class="flex-1 py-3 font-extrabold text-zinc-400 bg-zinc-900 border border-zinc-855 hover:bg-zinc-800 hover:text-white rounded-lg uppercase tracking-wider cursor-pointer font-bold">Cancel</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- MAIN APP IMPLEMENTATION (PURE CLIENT STORAGE AND HANDICAP REMOVED) -->
+    <script>
+      let state = {
+        rounds: [],
+        activeRoundId: null,
+        focusedRoundId: null,
+        currentHole: 1,
+        currentTab: 'setup',
+        courseName: '', // empty default!
+        holesCount: 18,
+        isMiniGolf: false,
+        players: [],
+        coursePresets: [],
+        recentPlayers: []
+      };
+
+      // Modal dynamic handler pointers
+      let currentConfirmCallback = null;
+
+      // Lifecycle init
+      window.addEventListener('load', () => {
+        loadDataFromStorage();
+        
+        // Render inputs initially
+        document.getElementById('input-course-name').value = state.courseName || '';
+        document.getElementById('input-custom-holes').value = state.holesCount || 18;
+
+        switchTab(state.currentTab);
+        render();
+      });
+
+      function loadDataFromStorage() {
+        try {
+          const savedRounds = localStorage.getItem('golf_scorecard_rounds');
+          if (savedRounds) state.rounds = JSON.parse(savedRounds);
+
+          const savedActiveId = localStorage.getItem('golf_scorecard_active_id');
+          if (savedActiveId) state.activeRoundId = JSON.parse(savedActiveId);
+
+          const savedFocusedId = localStorage.getItem('golf_scorecard_focused_id');
+          if (savedFocusedId) state.focusedRoundId = JSON.parse(savedFocusedId);
+
+          const savedHole = localStorage.getItem('golf_scorecard_current_hole');
+          if (savedHole) state.currentHole = parseInt(savedHole, 10) || 1;
+
+          const savedTab = localStorage.getItem('golf_scorecard_current_tab');
+          if (savedTab) state.currentTab = savedTab || 'setup';
+
+          const savedCourses = localStorage.getItem('leaderboard9000_course_presets');
+          if (savedCourses) state.coursePresets = JSON.parse(savedCourses);
+
+          const savedPlayers = localStorage.getItem('leaderboard9000_recent_players_simple') || localStorage.getItem('leaderboard9000_recent_players');
+          if (savedPlayers) {
+            const rawParsed = JSON.parse(savedPlayers);
+            // Robustly map out any remaining legacy handicap fields for type-uniformity
+            state.recentPlayers = rawParsed.map(p => ({ id: p.id || Date.now().toString(), name: p.name }));
+          }
+
+          // Restore last active player selection
+          const savedLastActivePlayers = localStorage.getItem('leaderboard9000_last_active_players');
+          if (savedLastActivePlayers) {
+            state.players = JSON.parse(savedLastActivePlayers);
+          } else {
+            state.players = [];
+          }
+
+          // Restore active theme with dynamic migration for amber
+          let savedTheme = localStorage.getItem('golf_scorecard_theme') || 'volt';
+          if (savedTheme === 'amber') savedTheme = 'light';
+          setTheme(savedTheme);
+        } catch (e) {
+          console.error("Local storage load exception", e);
+        }
+      }
+
+      function saveDataToStorage() {
+        try {
+          localStorage.setItem('golf_scorecard_rounds', JSON.stringify(state.rounds));
+          localStorage.setItem('golf_scorecard_active_id', JSON.stringify(state.activeRoundId));
+          localStorage.setItem('golf_scorecard_focused_id', JSON.stringify(state.focusedRoundId));
+          localStorage.setItem('golf_scorecard_current_hole', state.currentHole.toString());
+          localStorage.setItem('golf_scorecard_current_tab', state.currentTab);
+          localStorage.setItem('leaderboard9000_course_presets', JSON.stringify(state.coursePresets));
+          localStorage.setItem('leaderboard9000_recent_players_simple', JSON.stringify(state.recentPlayers));
+          localStorage.setItem('leaderboard9000_last_active_players', JSON.stringify(state.players));
+        } catch (e) {
+          console.error("Local storage sync error", e);
+        }
+      }
+
+      function setTheme(themeName) {
+        state.theme = themeName;
+        localStorage.setItem('golf_scorecard_theme', themeName);
+        document.documentElement.setAttribute('data-theme', themeName);
+      }
+
+      function switchTab(tabId) {
+        if (tabId === 'play' && !state.activeRoundId) {
+          showModal('No live game session', 'You must setup players and select a golf course first on the Setup panel to start scoring your game!', () => {
+            switchTab('setup');
+          }, 'Configure Setup', true);
+          return;
+        }
+        state.currentTab = tabId;
+        saveDataToStorage();
+
+        // Progressive Experience UX: Take user to the top of the page on transition
+        window.scrollTo(0, 0);
+
+        // High priority tab style pairings
+        ['setup', 'play', 'stats'].forEach((id) => {
+          const btn = document.getElementById(`nav-btn-${id}`);
+          const panel = document.getElementById(`panel-${id}`);
+          if (id === tabId) {
+            btn.className = "flex-1 py-2 px-3 rounded-lg text-xs font-black uppercase tracking-wider transition-all flex items-center justify-center gap-1.5 bg-volt text-black font-black select-none h-10 shadow-sm";
+            panel.classList.remove('hidden');
+          } else {
+            btn.className = "flex-1 py-2 px-3 rounded-lg text-xs font-black uppercase tracking-wider transition-all flex items-center justify-center gap-1.5 select-none text-zinc-400 hover:text-white cursor-pointer h-10";
+            panel.classList.add('hidden');
+          }
+        });
+
+        render();
+      }
+
+      function setHoles(num) {
+        state.holesCount = num;
+        document.getElementById('input-custom-holes').value = num;
+        render();
+      }
+
+      // custom layout stepper
+      function adjustSetupHoles(delta) {
+        const current = parseInt(document.getElementById('input-custom-holes').value, 10) || 18;
+        const next = Math.max(1, Math.min(100, current + delta));
+        state.holesCount = next;
+        document.getElementById('input-custom-holes').value = next;
+        render();
+      }
+
+      function applyCustomHoles(val) {
+        const parsed = Math.max(1, Math.min(100, parseInt(val, 10) || 18));
+        state.holesCount = parsed;
+        document.getElementById('input-custom-holes').value = parsed;
+        render();
+      }
+
+      function setMiniGolf(flag) {
+        state.isMiniGolf = flag;
+        render();
+      }
+
+      function addPlayerManual() {
+        const input = document.getElementById('input-player-name');
+        const name = input.value.trim();
+        if (!name) return;
+
+        if (state.players.some(p => p.name.toLowerCase() === name.toLowerCase())) {
+          alert("Player names must be unique.");
+          return;
+        }
+
+        const newPl = { id: Date.now().toString(), name };
+        state.players.push(newPl);
+        input.value = '';
+
+        // Update database presets
+        const filtered = state.recentPlayers.filter(p => p.name.toLowerCase() !== name.toLowerCase());
+        state.recentPlayers = [newPl, ...filtered].slice(0, 10);
+
+        saveDataToStorage();
+        render();
+      }
+
+      function addPlayerFromRecent(name) {
+        if (state.players.some(p => p.name.toLowerCase() === name.toLowerCase())) return;
+        state.players.push({ id: Date.now().toString(), name });
+        saveDataToStorage();
+        render();
+      }
+
+      function removeRecentPreset(e, name) {
+        e.stopPropagation();
+        state.recentPlayers = state.recentPlayers.filter(p => p.name.toLowerCase() !== name.toLowerCase());
+        saveDataToStorage();
+        render();
+      }
+
+      // custom deletion
+      function removeActivePlayer(id) {
+        state.players = state.players.filter(p => p.id !== id);
+        render();
+      }
+
+      function updateActiveNameInline(id, value) {
+        state.players = state.players.map(p => p.id === id ? { ...p, name: value.trim() || p.name } : p);
+        saveDataToStorage();
+      }
+
+      function selectPresetCourse(name) {
+        state.courseName = name;
+        document.getElementById('input-course-name').value = name;
+        render();
+      }
+
+      function launchMatchSession() {
+        const rawCourse = document.getElementById('input-course-name').value.trim();
+        if (!rawCourse) {
+          alert("Please input a Golf Course Name to start tracking!");
+          return;
+        }
+
+        if (state.players.length === 0) {
+          alert("Please add at least one player to your squad roster first!");
+          return;
+        }
+
+        // Active round bypass warning
+        const oldActive = state.rounds.find(r => r.id === state.activeRoundId);
+        if (oldActive) {
+          showModal("Session override warning!", `You have a live round currently running on ${oldActive.courseName}. Starting a new game will automatically record the legacy session to history archives. Proceed?`, () => {
+            oldActive.completed = true;
+            triggerGameStart(rawCourse);
+          }, "Archive & Start New");
+        } else {
+          triggerGameStart(rawCourse);
+        }
+      }
+
+      function triggerGameStart(courseTitle) {
+        state.courseName = courseTitle;
+        const defaultPars = {};
+        for(let h=1; h<=state.holesCount; h++) {
+          defaultPars[h] = state.isMiniGolf ? 2 : 4;
+        }
+
+        const initialScores = {};
+        state.players.forEach(p => {
+          initialScores[p.id] = {};
+          for(let h=1; h<=state.holesCount; h++) {
+            initialScores[p.id][h] = 0;
+          }
+        });
+
+        const newId = `rnd_${Date.now()}`;
+        const newRoundObj = {
+          id: newId,
+          courseName: courseTitle,
+          date: new Date().toLocaleDateString('en-US', { year:'numeric', month:'short', day:'numeric' }),
+          holesCount: state.holesCount,
+          pars: defaultPars,
+          players: [...state.players],
+          scores: initialScores,
+          completed: false
+        };
+
+        const filteredCourses = state.coursePresets.filter(c => c.toLowerCase() !== courseTitle.toLowerCase());
+        state.coursePresets = [courseTitle, ...filteredCourses].slice(0, 6);
+
+        state.rounds = [newRoundObj, ...state.rounds];
+        state.activeRoundId = newId;
+        state.currentHole = 1;
+        state.currentTab = 'play';
+
+        saveDataToStorage();
+        switchTab('play');
+      }
+
+      function changeActiveHole(dir) {
+        const active = getActiveRound();
+        if (!active) return;
+        const next = state.currentHole + dir;
+        if (next >= 1 && next <= active.holesCount) {
+          state.currentHole = next;
+          saveDataToStorage();
+          render();
+        }
+      }
+
+      function selectCurrentHole(num) {
+        state.currentHole = num;
+        saveDataToStorage();
+        render();
+      }
+
+      function updateActivePar(dir) {
+        const active = getActiveRound();
+        if (!active) return;
+        const currentPar = active.pars[state.currentHole] || 4;
+        active.pars[state.currentHole] = Math.max(1, Math.min(10, currentPar + dir));
+        saveDataToStorage();
+        render();
+      }
+
+      function adjustPlayerScore(playerId, delta) {
+        const active = getActiveRound();
+        if (!active) return;
+        const currentSc = active.scores[playerId]?.[state.currentHole] || 0;
+        active.scores[playerId][state.currentHole] = Math.max(0, currentSc + delta);
+        saveDataToStorage();
+        render();
+      }
+
+      function confirmFinishActiveRound() {
+        showModal(
+          "Complete Match and Record?",
+          "Are you sure you want to finalize this scorecard? Once recorded, this match is safely archived in your Tournament Vault list and is locked for edits.",
+          () => {
+            const active = getActiveRound();
+            if (!active) return;
+            active.completed = true;
+            state.activeRoundId = null;
+            state.currentTab = 'stats';
+            saveDataToStorage();
+            switchTab('stats');
+          },
+          "Yes, Complete Match 🏆"
+        );
+      }
+
+      function deleteRoundArchive(id) {
+        showModal(
+          "Purge scorecard?",
+          "This action is permanent and will completely remove this round record from your history cache.",
+          () => {
+            state.rounds = state.rounds.filter(r => r.id !== id);
+            if (state.activeRoundId === id) state.activeRoundId = null;
+            saveDataToStorage();
+            render();
+          },
+          "Yes, Delete Forever"
+        );
+      }
+
+      // Utils selectors
+      function getActiveRound() {
+        return state.rounds.find(r => r.id === state.activeRoundId) || null;
+      }
+
+      function getSubtotals(round, playerId) {
+        let outScore = 0;
+        let inScore = 0;
+        let outPar = 0;
+        let inPar = 0;
+
+        const limit = Math.min(9, round.holesCount);
+        for (let h = 1; h <= limit; h++) {
+          const s = round.scores[playerId]?.[h];
+          const p = round.pars[h] || 4;
+          if (s && s > 0) outScore += s;
+          outPar += p;
+        }
+
+        if (round.holesCount > 9) {
+          for (let h = 10; h <= round.holesCount; h++) {
+            const s = round.scores[playerId]?.[h];
+            const p = round.pars[h] || 4;
+            if (s && s > 0) inScore += s;
+            inPar += p;
+          }
+        }
+
+        const totalGross = outScore + inScore;
+        const totalPar = outPar + inPar;
+
+        return { outScore, inScore, totalGross, outPar, inPar, totalPar };
+      }
+
+      // 4. Score term styles and labels
+      function getScoreTerm(score, par) {
+        if (!score || score === 0) return "";
+        const diff = score - par;
+        if (diff === -3) return "Albatross";
+        if (diff === -2) return "Eagle";
+        if (diff === -1) return "Birdie";
+        if (diff === 0) return "Par";
+        if (diff === 1) return "Bogey";
+        if (diff === 2) return "DB";
+        if (diff >= 3) return `+${diff}`;
+        return "";
+      }
+
+      function getScoreTermStyles(score, par) {
+        if (!score || score === 0) return "bg-zinc-900 border-zinc-800 text-zinc-400";
+        const diff = score - par;
+        if (diff < 0) return "bg-green-950/40 text-green-400 border-green-800/40";
+        if (diff === 0) return "bg-indigo-950/40 text-indigo-400 border-indigo-805/40";
+        if (diff === 1) return "bg-amber-955/40 text-amber-500 border-amber-805/40";
+        if (diff >= 2) return "bg-rose-955/40 text-rose-450 border-rose-805/40";
+        return "bg-zinc-900 border-zinc-850 text-zinc-350";
+      }
+
+      // Dialog modals controllers
+      function showModal(title, msg, onConfirm, confirmText = "Confirm", isAlert = false) {
+        document.getElementById('modal-title').innerText = title;
+        document.getElementById('modal-desc').innerText = msg;
+        
+        const cBtn = document.getElementById('modal-btn-confirm');
+        cBtn.innerText = confirmText;
+        cBtn.onclick = () => {
+          onConfirm();
+          closeModal();
+        };
+
+        const cancelBtn = document.getElementById('modal-btn-cancel');
+        if (isAlert) {
+          cancelBtn.classList.add('hidden');
+        } else {
+          cancelBtn.classList.remove('hidden');
+        }
+
+        document.getElementById('modal-container').classList.remove('hidden');
+      }
+
+      function closeModal() {
+        document.getElementById('modal-container').classList.add('hidden');
+      }
+
+      function promptMasterErase() {
+        showModal(
+          "Wipe Scorecard Storage?",
+          "This operation is absolute and cannot be undone. You will lose the current live scorecard, squad rosters, and the entire archived matches database permanently from your browser cache.",
+          () => {
+            state.rounds = [];
+            state.activeRoundId = null;
+            state.focusedRoundId = null;
+            state.currentHole = 1;
+            state.currentTab = 'setup';
+            state.players = [{ id: "1", name: "You" }];
+            saveDataToStorage();
+            localStorage.clear();
+            switchTab('setup');
+          },
+          "Yes, Wipe Database"
+        );
+      }
+
+      // -------------------- MASTER RENDERING ENGINE --------------------
+      function render() {
+        const active = getActiveRound();
+
+        // 1. SETUP PANEL RENDERS
+        const resumeBanner = document.getElementById('setup-resume-banner');
+        if (active) {
+          resumeBanner.classList.remove('hidden');
+          resumeBanner.classList.add('flex');
+          document.getElementById('setup-resume-course').innerHTML = `${active.courseName} <span class="text-xs text-zinc-555 font-mono font-bold uppercase">(${active.holesCount} Holes)</span>`;
+          document.getElementById('setup-resume-players').innerText = `Roster: ${active.players.map(p => p.name).join(', ')}`;
+        } else {
+          resumeBanner.classList.add('hidden');
+          resumeBanner.classList.remove('flex');
+        }
+
+        // Course presets dynamic list
+        const cPresetsBox = document.getElementById('box-course-presets');
+        const cPresetsList = document.getElementById('list-course-presets');
+        if (state.coursePresets.length > 0) {
+          cPresetsBox.classList.remove('hidden');
+          cPresetsList.innerHTML = state.coursePresets.map(preset => `
+            <button type="button" onclick="selectPresetCourse('${preset.replace(/'/g, "\\'")}')" class="px-3 py-2 text-xs sm:text-sm rounded-lg transition-all font-sans font-bold border ${state.courseName.toLowerCase() === preset.toLowerCase() ? 'bg-volt border-volt text-black font-black' : 'bg-zinc-900 border-zinc-850 text-zinc-300 hover:bg-zinc-800'}">
+              ${preset}
+            </button>
+          `).join('');
+        } else {
+          cPresetsBox.classList.add('hidden');
+        }
+
+        // Holes layout visual buttons state
+        const holes9Btn = document.getElementById('btn-holes-9');
+        const holes18Btn = document.getElementById('btn-holes-18');
+        if (state.holesCount === 9) {
+          holes9Btn.className = "py-2 px-3.5 font-sans rounded-xl border transition-all flex flex-col items-center justify-center bg-zinc-900 border-volt text-volt cursor-pointer text-center h-14 shadow-sm";
+          holes18Btn.className = "py-2 px-3.5 font-sans rounded-xl border transition-all flex flex-col items-center justify-center bg-zinc-950 border-zinc-800 text-zinc-400 cursor-pointer text-center h-14";
+        } else if (state.holesCount === 18) {
+          holes9Btn.className = "py-2 px-3.5 font-sans rounded-xl border transition-all flex flex-col items-center justify-center bg-zinc-950 border-zinc-805 text-zinc-400 cursor-pointer text-center h-14";
+          holes18Btn.className = "py-2 px-3.5 font-sans rounded-xl border transition-all flex flex-col items-center justify-center bg-zinc-900 border-volt text-volt cursor-pointer text-center h-14 shadow-sm";
+        } else {
+          holes9Btn.className = "py-2 px-3.5 font-sans rounded-xl border transition-all flex flex-col items-center justify-center bg-zinc-950 border-zinc-800 text-zinc-400 cursor-pointer text-center h-14";
+          holes18Btn.className = "py-2 px-3.5 font-sans rounded-xl border transition-all flex flex-col items-center justify-center bg-zinc-950 border-zinc-800 text-zinc-400 cursor-pointer text-center h-14";
+        }
+
+        // Scoring rules layout buttons state
+        const stdStyleBtn = document.getElementById('btn-style-standard');
+        const miniStyleBtn = document.getElementById('btn-style-minigolf');
+        if (state.isMiniGolf) {
+          stdStyleBtn.className = "py-2.5 px-3 font-sans rounded-xl border transition-all flex flex-col items-center justify-center bg-zinc-950 border-zinc-800 text-zinc-400 cursor-pointer text-center h-12";
+          miniStyleBtn.className = "py-2.5 px-3 font-sans rounded-xl border transition-all flex flex-col items-center justify-center bg-volt border-volt text-black font-black cursor-pointer text-center h-12 shadow-sm";
+        } else {
+          stdStyleBtn.className = "py-2.5 px-3 font-sans rounded-xl border transition-all flex flex-col items-center justify-center bg-zinc-900 border-volt text-volt font-black cursor-pointer text-center h-12 shadow-sm";
+          miniStyleBtn.className = "py-2.5 px-3 font-sans rounded-xl border transition-all flex flex-col items-center justify-center bg-zinc-950 border-zinc-800 text-zinc-400 cursor-pointer text-center h-12";
+        }
+
+        // Player roster badge
+        document.getElementById('label-players-count').innerText = `${state.players.length} ACTIVE`;
+
+        // Squad presets list elements
+        const squadsPresetsBox = document.getElementById('box-recent-players');
+        const squadsPresetsList = document.getElementById('list-recent-players');
+        if (state.recentPlayers.length > 0) {
+          squadsPresetsBox.classList.remove('hidden');
+          squadsPresetsList.innerHTML = state.recentPlayers.map(recent => `
+            <button type="button" onclick="addPlayerFromRecent('${recent.name.replace(/'/g, "\\'")}')" class="inline-flex items-center gap-1.5 px-3 py-2 text-xs sm:text-sm rounded-lg bg-zinc-900 border border-zinc-855 hover:bg-zinc-800 text-zinc-350 hover:text-white text-left transition-all font-semibold cursor-pointer select-none">
+              <span class="font-black text-volt text-sm leading-none">+</span>
+              <span>${recent.name}</span>
+              <span onclick="removeRecentPreset(event, '${recent.name.replace(/'/g, "\\'")}')" class="text-zinc-500 hover:text-red-500 font-extrabold ml-1.5 text-sm leading-none block w-4.5 h-4.5 flex items-center justify-center bg-zinc-955 rounded hover:bg-zinc-900 font-bold">×</span>
+            </button>
+          `).join('');
+        } else {
+          squadsPresetsBox.classList.add('hidden');
+        }
+
+        // Active drafted squad members elements setup list HTML
+        const draftedList = document.getElementById('list-squad-players');
+        if (state.players.length === 0) {
+          draftedList.innerHTML = `
+            <div class="flex flex-col items-center justify-center py-8 px-4 border border-dashed border-zinc-800 rounded-xl bg-zinc-950/20 text-center select-none">
+              <p class="text-xs sm:text-sm font-bold text-zinc-500 uppercase tracking-wider">No active players</p>
+              <p class="text-[10px] text-zinc-650 mt-1 uppercase font-bold font-mono">Add player names above to draft your game squad.</p>
+            </div>
+          `;
+        } else {
+          draftedList.innerHTML = state.players.map(p => `
+            <div class="flex items-center justify-between gap-3 p-3 bg-zinc-950 border border-zinc-900 rounded-xl" id="draft-row-${p.id}">
+              <div class="flex items-center gap-2.5 flex-1 min-w-0 pr-2">
+                <div class="flex items-center justify-center w-8 h-8 rounded-lg bg-zinc-900 border border-zinc-800 text-zinc-400 shrink-0 select-none">
+                  👤
+                </div>
+                <div class="flex-1 min-w-0">
+                  <input type="text" value="${p.name}" onchange="updateActiveNameInline('${p.id}', this.value)" class="font-sans font-black text-sm sm:text-base text-white bg-transparent border-b border-transparent focus:border-zinc-700 focus:outline-none py-0.5 w-full -mr-1" />
+                </div>
+              </div>
+              <button onclick="removeActivePlayer('${p.id}')" class="w-10 h-10 flex items-center justify-center text-rose-505 hover:text-rose-400 rounded-lg bg-zinc-900 border border-zinc-850 hover:bg-zinc-800 hover:border-red-950/40 transition-all cursor-pointer select-none shrink-0" aria-label="Delete">
+                🗑️
+              </button>
+            </div>
+          `).join('');
+        }
+
+
+        // 2. PLAY PANEL RENDERS
+        const playBadge = document.getElementById('nav-badge-live');
+        if (active) {
+          playBadge.classList.remove('hidden');
+
+          document.getElementById('play-title-course').innerText = active.courseName;
+          document.getElementById('play-title-date').innerText = active.date;
+          document.getElementById('play-active-hole-indicator').innerText = `Hole ${state.currentHole}/${active.holesCount}`;
+          
+          const curPar = active.pars[state.currentHole] || 4;
+          document.getElementById('play-par-value').innerText = curPar;
+          document.getElementById('label-par-hole').innerText = `Par for Hole ${state.currentHole}:`;
+
+          // Horizontal carousel holes HTML
+          const holesCarousel = document.getElementById('play-holes-carousel');
+          let holesHTML = "";
+          for (let h = 1; h <= active.holesCount; h++) {
+            const isActive = h === state.currentHole;
+            const isFinished = active.players.every(p => {
+              const sc = active.scores[p.id]?.[h];
+              return sc !== undefined && sc > 0;
+            });
+
+            holesHTML += `
+              <button onclick="selectCurrentHole(${h})" class="w-11 h-11 rounded-xl font-sans text-sm font-black transition-all border flex flex-col items-center justify-center relative cursor-pointer ${isActive ? 'bg-volt text-black border-volt font-black shadow-md' : isFinished ? 'bg-zinc-900 text-volt border-volt/10' : 'bg-zinc-950 text-zinc-400 border-zinc-900'}">
+                <span class="leading-none text-xs sm:text-sm">${h}</span>
+                ${!isActive && isFinished ? '<span class="absolute bottom-1 w-1 h-1 bg-volt rounded-full"></span>' : ''}
+              </button>
+            `;
+          }
+          holesCarousel.innerHTML = holesHTML;
+
+          // Scores editor list HTML
+          const playPlayersList = document.getElementById('play-players-list');
+          playPlayersList.innerHTML = active.players.map(p => {
+            const scoreVal = active.scores[p.id]?.[state.currentHole] || 0;
+            const hasScored = scoreVal > 0;
+            
+            const { totalGross, totalPar } = getSubtotals(active, p.id);
+            const relToPar = totalGross - totalPar;
+            const relStr = totalGross === 0 ? "E" : relToPar === 0 ? "E" : relToPar > 0 ? `+${relToPar}` : relToPar;
+
+            let termHTML = "";
+            if (hasScored) {
+              termHTML = `
+                <span class="text-[10px] sm:text-xs font-black px-2.5 py-0.5 rounded border uppercase tracking-wider ${getScoreTermStyles(scoreVal, curPar)}">
+                  ${getScoreTerm(scoreVal, curPar)}
+                </span>
+              `;
+            } else {
+              termHTML = `
+                <span class="text-[10px] sm:text-xs font-mono font-bold text-zinc-650 uppercase tracking-widest select-none py-0.5">— No strokes entered</span>
+              `;
+            }
+
+            return `
+              <div class="p-4 bg-cybercard border ${hasScored ? 'border-volt/25' : 'border-zinc-850'} rounded-xl shadow-md flex flex-row items-center justify-between gap-3" id="play-row-card-${p.id}">
+                <div class="flex-1 min-w-0 pr-1 space-y-1">
+                  <h4 class="font-sans font-black text-lg sm:text-xl text-white leading-tight truncate">${p.name}</h4>
+                  <div class="text-xs sm:text-sm text-zinc-400 font-semibold font-mono">
+                    Total Strokes: <span class="text-white font-extrabold">${totalGross}</span> <span class="text-volt font-black">(${relStr})</span>
+                  </div>
+                  <div class="flex items-center gap-1.5 pt-1 min-h-[24px]">
+                    ${termHTML}
+                  </div>
+                </div>
+
+                <div class="flex items-center gap-2 shrink-0">
+                  <div class="flex items-center gap-1.5 bg-zinc-950 p-1.5 border border-zinc-900 rounded-xl">
+                    <button onclick="adjustPlayerScore('${p.id}', -1)" class="w-11 h-11 rounded-lg bg-zinc-900 border border-zinc-850 hover:bg-zinc-800 text-white font-black text-lg flex items-center justify-center transition-all select-none active:scale-90 cursor-pointer">─</button>
+                    <span class="w-11 text-center text-lg sm:text-2xl font-sans font-black select-none ${hasScored ? 'text-volt font-mono' : 'text-zinc-700'}">${scoreVal}</span>
+                    <button onclick="adjustPlayerScore('${p.id}', 1)" class="w-11 h-11 rounded-lg bg-zinc-900 border border-zinc-850 hover:bg-zinc-800 text-white font-black text-lg flex items-center justify-center transition-all select-none active:scale-90 cursor-pointer">┼</button>
+                  </div>
+                </div>
+              </div>
+            `;
+          }).join('');
+
+          // Carousel responsive bottom submit controls
+          const submissionBlock = document.getElementById('play-submission-block');
+          if (state.currentHole < active.holesCount) {
+            submissionBlock.innerHTML = `
+              <div class="flex flex-col sm:flex-row items-center gap-2.5 w-full">
+                <button onclick="changeActiveHole(1)" class="w-full sm:flex-1 py-4 px-6 bg-volt border border-[#ccff00] hover:bg-volt-hover text-black text-sm sm:text-base font-black rounded-xl shadow-md select-none uppercase font-sans tracking-wide transition-all flex items-center justify-center gap-2 cursor-pointer h-14">
+                  Next Hole ▶
+                </button>
+                <button onclick="confirmFinishActiveRound()" class="w-full sm:w-auto px-4 py-3.5 bg-zinc-950 border border-zinc-850 hover:bg-zinc-900 text-zinc-505 hover:text-rose-450 text-xs font-bold rounded-xl transition-colors cursor-pointer select-none uppercase tracking-wider font-bold">
+                  Finish Early
+                </button>
+              </div>
+            `;
+          } else {
+            submissionBlock.innerHTML = `
+              <button onclick="confirmFinishActiveRound()" class="w-full py-4 px-6 bg-volt border border-[#ccff00] hover:bg-volt-hover text-black text-sm sm:text-base font-black rounded-xl shadow-md select-none uppercase font-sans tracking-widest transition-all flex items-center justify-center gap-2 cursor-pointer h-14">
+                🏆 Complete Game & Record 🏆
+              </button>
+            `;
+          }
+
+        } else {
+          playBadge.classList.add('hidden');
+        }
+
+
+        // 3. STATS PANEL RENDERS
+        const compRounds = state.rounds.filter(r => r.completed);
+
+        // Leaderboard stats winner celebration HTML
+        const winnerCardContainer = document.getElementById('stats-winner-box');
+        const activeResultsRound = compRounds.find(r => r.id === state.focusedRoundId) || compRounds[0] || null;
+
+        if (activeResultsRound) {
+          winnerCardContainer.classList.remove('hidden');
+
+          // Build standout performance list
+          const pStatsArr = activeResultsRound.players.map(p => {
+            const { totalGross, totalPar } = getSubtotals(activeResultsRound, p.id);
+            const totalGrossCalculated = Object.values(activeResultsRound.scores[p.id] || {}).reduce((a, b) => a + b, 0);
+            return {
+              id: p.id,
+              name: p.name,
+              totalGross,
+              totalPar,
+              played: totalGrossCalculated > 0
+            };
+          }).filter(p => p.played);
+
+          if (pStatsArr.length === 0) {
+            winnerCardContainer.innerHTML = `<span class="text-xs font-mono text-zinc-505">Tournament initiated list empty. Score holes.</span>`;
+          } else {
+            const sorted = [...pStatsArr].sort((a,b) => a.totalGross - b.totalGross);
+            const bestGr = sorted[0].totalGross;
+            const winners = sorted.filter(p => p.totalGross === bestGr);
+            const isTie = winners.length > 1;
+
+            // Sheet grid pars columns
+            let hHeaders = "";
+            let parRowValues = "";
+            for (let h = 1; h <= activeResultsRound.holesCount; h++) {
+              hHeaders += `<th class="p-2 text-center font-bold font-mono min-w-[28px] text-[10px] text-zinc-400 font-mono">${h}</th>`;
+              parRowValues += `<td class="p-2 text-center font-bold text-zinc-350 font-mono">${activeResultsRound.pars[h] || 4}</td>`;
+            }
+
+            const totalParsCalculated = Object.values(activeResultsRound.pars).reduce((a,b) => a+b, 0);
+
+            // Row nodes scores
+            let rowsHtml = "";
+            pStatsArr.forEach(pStat => {
+              const belongsWinner = winners.some(w => w.id === pStat.id);
+              let holesScoresCells = "";
+              for (let h = 1; h <= activeResultsRound.holesCount; h++) {
+                const sVal = activeResultsRound.scores[pStat.id]?.[h];
+                const hasS = sVal !== undefined && sVal > 0;
+                const par = activeResultsRound.pars[h] || 4;
+                const visualClass = hasS ? getScoreTermStyles(sVal, par) : "text-zinc-650";
+
+                holesScoresCells += `
+                  <td class="p-1 text-center font-mono">
+                    <span class="text-xs font-black px-1.5 py-0.5 rounded ${visualClass}">
+                      ${hasS ? sVal : "-"}
+                    </span>
+                  </td>
+                `;
+              }
+
+              const diffVal = pStat.totalGross - pStat.totalPar;
+              const diffLabel = diffVal === 0 ? "E" : diffVal > 0 ? `+${diffVal}` : diffVal;
+
+              rowsHtml += `
+                <tr class="hover:bg-zinc-900/30 transition-colors h-9 ${belongsWinner ? 'bg-volt/[0.02]' : ''}">
+                  <td class="p-2.5 font-black text-white sticky left-0 bg-zinc-950 z-10 shadow-[1px_0_3px_rgba(0,0,0,0.5)] whitespace-nowrap">
+                    <span class="flex items-center gap-1 text-[13px] font-black">
+                      ${belongsWinner ? '<span class="text-volt">👑</span>' : ''}
+                      <span>${pStat.name}</span>
+                    </span>
+                  </td>
+                  ${holesScoresCells}
+                  <td class="p-2 text-center font-bold font-mono text-sm ${belongsWinner ? 'bg-volt text-black font-black winner-score-cell' : 'bg-zinc-900 text-zinc-200'}">
+                    ${pStat.totalGross}
+                    <span class="block text-[9px] font-bold ${belongsWinner ? 'text-zinc-800' : 'text-volt'}">${diffLabel}</span>
+                  </td>
+                </tr>
+              `;
+            });
+
+            winnerCardContainer.innerHTML = `
+              <div class="flex flex-col sm:flex-row sm:items-center justify-between border-b border-zinc-900 pb-3 gap-3">
+                <div class="space-y-1">
+                  <span class="font-mono text-[10px] font-bold uppercase tracking-widest text-[#94a3b8]">🏆 OFFICIAL MATCH RESULTS 🏆</span>
+                  <h2 class="font-sans font-black text-xl text-white">${activeResultsRound.courseName} <span class="text-xs text-zinc-500 font-normal font-sans">(${activeResultsRound.date})</span></h2>
+                </div>
+                <span class="px-3 py-1 bg-zinc-900 border border-zinc-855 rounded-lg text-xs font-mono font-bold text-zinc-400 self-start sm:self-center">${activeResultsRound.holesCount} Holes Scored</span>
+              </div>
+
+              <!-- Standings box -->
+              <div class="p-4 bg-zinc-900/40 border border-volt/20 rounded-xl flex flex-col sm:flex-row items-center justify-between gap-4 text-center sm:text-left">
+                <div class="flex flex-col sm:flex-row items-center gap-3.5">
+                  <div class="w-12 h-12 rounded-full bg-volt text-cyberdark flex items-center justify-center font-black text-xl shadow-lg select-none">👑</div>
+                  <div>
+                    <span class="text-[10px] font-mono font-bold text-volt uppercase tracking-wider block">${isTie ? '⭐ JOINT CHAMPIONS' : '🥇 CHAMPION'}</span>
+                    <h3 class="font-sans font-black text-xl sm:text-2xl text-white tracking-tight leading-tight">${winners.map(w => w.name).join(' & ')}</h3>
+                    <p class="text-[11px] text-zinc-400 font-sans mt-0.5">Finished victorious at <span class="text-volt font-bold">${activeResultsRound.courseName}</span>!</p>
+                  </div>
+                </div>
+
+                <div class="bg-zinc-950 px-4 py-2 rounded-lg border border-zinc-850 text-center shrink-0 w-full sm:w-auto">
+                  <span class="text-[9px] font-mono font-bold text-zinc-550 uppercase block tracking-wider font-bold">Gross Score</span>
+                  <span class="text-2xl font-black font-mono text-volt leading-none block mt-1">${bestGr}</span>
+                </div>
+              </div>
+
+              <!-- Scoresheet grid -->
+              <div class="space-y-2">
+                <h3 class="font-sans font-black text-xs text-zinc-350 uppercase tracking-wider flex items-center gap-1.5 pt-1 select-none">⛳ Hole-by-Hole Score breakdown</h3>
+                <div class="overflow-x-auto rounded-xl border border-zinc-900 bg-zinc-950">
+                  <table class="w-full border-collapse font-sans text-xs text-zinc-300">
+                    <thead>
+                      <tr class="bg-zinc-900 border-b border-zinc-850 text-zinc-400 font-semibold uppercase font-mono text-[9px] h-8">
+                        <th class="p-2.5 text-left font-bold min-w-[90px] sticky left-0 bg-zinc-900 z-10 shadow-[1px_0_3px_rgba(0,0,0,0.5)]">PLAYER</th>
+                        ${hHeaders}
+                        <th class="p-2 text-center font-bold bg-[#ccff00] text-black min-w-[45px] uppercase font-sans">SCORE</th>
+                      </tr>
+                    </thead>
+                    <tbody class="divide-y divide-zinc-900">
+                      <!-- Pars info Row -->
+                      <tr class="bg-zinc-950 text-zinc-500 font-medium h-8">
+                        <td class="p-2.5 font-bold uppercase tracking-wider text-[9px] sticky left-0 bg-zinc-950 z-10 shadow-[1px_0_3px_rgba(0,0,0,0.5)] font-mono">Course Par</td>
+                        ${parRowValues}
+                        <td class="p-2 text-center font-black bg-zinc-900 text-zinc-200 font-mono">${totalParsCalculated}</td>
+                      </tr>
+                      ${rowsHtml}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            `;
+          }
+        } else {
+          winnerCardContainer.classList.add('hidden');
+        }
+
+
+        // Active live scoresheet tracker
+        const liveContainer = document.getElementById('stats-live-scorecard');
+        const ongoing = getActiveRound();
+        if (ongoing) {
+          liveContainer.classList.remove('hidden');
+
+          let ongoingHHeaders = "";
+          let ongoingParsCells = "";
+          for (let h = 1; h <= ongoing.holesCount; h++) {
+            ongoingHHeaders += `<th class="p-1.5 text-center font-bold min-w-[28px] font-mono text-zinc-400 text-[10px]"><button onclick="selectCurrentHole(${h}); switchTab('play');" class="hover:underline hover:text-volt focus:outline-none font-bold">${h}</button></th>`;
+            ongoingParsCells += `<td class="p-1.5 text-center font-bold text-zinc-355 font-mono">${ongoing.pars[h] || 4}</td>`;
+          }
+
+          const ongoingTotalParSum = Object.values(ongoing.pars).reduce((a,b) => a+b,0);
+
+          let ongoingRowsHtml = "";
+          ongoing.players.forEach(p => {
+            const { totalGross, totalPar } = getSubtotals(ongoing, p.id);
+            const rDiff = totalGross - totalPar;
+            const rStr = totalGross === 0 ? "E" : rDiff === 0 ? "E" : rDiff > 0 ? `+${rDiff}` : rDiff;
+
+            let ongoingHCells = "";
+            for (let h = 1; h <= ongoing.holesCount; h++) {
+              const scVal = ongoing.scores[p.id]?.[h];
+              const isFilled = scVal !== undefined && scVal > 0;
+              const parVal = ongoing.pars[h] || 4;
+              
+              let scoreColorTextClass = "text-zinc-650";
+              if (isFilled) {
+                const df = scVal - parVal;
+                if (df === -1) scoreColorTextClass = "text-green-400 bg-green-950/20 font-bold rounded font-mono";
+                else if (df <= -2) scoreColorTextClass = "text-volt bg-zinc-900 border border-volt/15 font-black rounded font-mono";
+                else if (df === 0) scoreColorTextClass = "text-indigo-400 bg-indigo-950/20 font-bold rounded font-mono";
+                else if (df === 1) scoreColorTextClass = "text-amber-500 bg-amber-955/10 font-bold font-mono";
+                else if (df >= 2) scoreColorTextClass = "text-rose-455 bg-rose-955/10 font-mono";
+              }
+
+              ongoingHCells += `
+                <td class="p-0.5 text-center font-mono h-8">
+                  <button onclick="selectCurrentHole(${h}); switchTab('play');" class="w-full text-sm font-black transition-transform hover:scale-110 focus:outline-none cursor-pointer ${scoreColorTextClass}">${isFilled ? scVal : "-"}</button>
+                </td>
+              `;
+            }
+
+            ongoingRowsHtml += `
+              <tr class="hover:bg-zinc-900/25 transition-colors h-8">
+                <td class="p-2 font-black text-sm text-white sticky left-0 bg-zinc-950 z-10 shadow-[1px_0_3px_rgba(0,0,0,0.5)] whitespace-nowrap">${p.name}</td>
+                ${ongoingHCells}
+                <td class="p-1 text-center font-extrabold text-black bg-[#ccff00] font-mono leading-tight">
+                  ${totalGross}
+                  <span class="block text-[8px] font-bold text-zinc-800 font-mono">${rStr}</span>
+                </td>
+              </tr>
+            `;
+          });
+
+          liveContainer.innerHTML = `
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between border-b border-zinc-805 pb-2.5 gap-2">
+              <div>
+                <h4 class="font-sans font-black text-white text-sm uppercase tracking-wider flex items-center gap-1.5"><span class="text-volt">📊</span> Live Match Scorecard</h4>
+                <p class="text-xs text-zinc-405 font-sans mt-0.5">Course: <span class="text-volt font-bold">${ongoing.courseName}</span> (${ongoing.holesCount} holes) — Click any score cell to edit!</p>
+              </div>
+              <button onclick="exportActiveRoundCSV()" class="h-8.5 px-3.5 text-xs font-black text-zinc-955 bg-volt hover:bg-volt-hover rounded-lg uppercase select-none transition-all flex items-center justify-center gap-1 w-full sm:w-auto font-sans cursor-pointer font-bold">
+                <span>Export Live CSV</span>
+              </button>
+            </div>
+
+            <div class="overflow-x-auto rounded-xl border border-zinc-900 bg-zinc-950">
+              <table class="w-full border-collapse font-sans text-xs text-zinc-300">
+                <thead>
+                  <tr class="bg-zinc-900 border-b border-zinc-855 text-zinc-400 font-semibold uppercase font-mono text-[9px] h-8">
+                    <th class="p-2 text-left font-bold min-w-[85px] sticky left-0 bg-zinc-900 z-10 shadow-[1px_0_3px_rgba(0,0,0,0.5)]">PLAYER</th>
+                    ${ongoingHHeaders}
+                    <th class="p-1.5 text-center font-black bg-[#ccff00] text-black min-w-[45px] uppercase font-sans">SCORE</th>
+                  </tr>
+                </thead>
+                <tbody class="divide-y divide-zinc-900">
+                  <tr class="bg-zinc-950 text-zinc-500 font-medium h-8">
+                    <td class="p-2 font-bold uppercase tracking-wider text-[9px] sticky left-0 bg-zinc-950 z-10 shadow-[1px_0_3px_rgba(0,0,0,0.5)] font-mono">Course Par</td>
+                    ${ongoingParsCells}
+                    <td class="p-1.5 text-center font-black bg-zinc-900 text-zinc-200 font-mono">${ongoingTotalParSum}</td>
+                  </tr>
+                  ${ongoingRowsHtml}
+                </tbody>
+              </table>
+            </div>
+          `;
+        } else {
+          liveContainer.classList.add('hidden');
+        }
+
+        // Cumulative metrics elements
+        const cumBox = document.getElementById('stats-cumulative-box');
+        const exportAllBtn = document.getElementById('btn-export-all-history');
+        if (compRounds.length > 0) {
+          cumBox.classList.remove('hidden');
+          exportAllBtn.classList.remove('hidden');
+
+          let playedHoles = 0;
+          let totalStr = 0;
+          let totalP = 0;
+
+          compRounds.forEach(r => {
+            r.players.forEach(p => {
+              for (let h = 1; h <= r.holesCount; h++) {
+                const sc = r.scores[p.id]?.[h];
+                if (sc && sc > 0) {
+                  playedHoles++;
+                  totalStr += sc;
+                  totalP += (r.pars[h] || 4);
+                }
+              }
+            });
+          });
+
+          let totalParticipations = 0;
+          compRounds.forEach(r => {
+            r.players.forEach(p => {
+              let hasPlayed = false;
+              for (let h = 1; h <= r.holesCount; h++) {
+                const sc = r.scores[p.id]?.[h];
+                if (sc && sc > 0) {
+                  hasPlayed = true;
+                }
+              }
+              if (hasPlayed) {
+                totalParticipations++;
+              }
+            });
+          });
+
+          const average = totalParticipations > 0 ? (totalStr / totalParticipations).toFixed(1) : "0.0";
+          const diffPar = totalParticipations > 0 ? (totalStr - totalP) / totalParticipations : 0;
+          const relToParLabel = diffPar === 0 ? "E" : diffPar > 0 ? `+${diffPar.toFixed(1)}` : diffPar.toFixed(1);
+
+          cumBox.innerHTML = `
+            <div class="flex items-center gap-2 text-volt border-b border-zinc-900 pb-2">
+              <h4 class="font-sans font-black text-xs uppercase tracking-wider text-white">Cumulative Metrics (${compRounds.length} matches archived)</h4>
+            </div>
+
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-2.5">
+              <div class="p-3 bg-zinc-950 border border-zinc-900 rounded-lg flex flex-col justify-between h-20 shadow-inner select-none font-mono">
+                <span class="text-[10px] font-bold text-zinc-550 uppercase tracking-wider font-bold">Total Rounds</span>
+                <span class="text-xl font-black text-white">${compRounds.length}</span>
+              </div>
+              <div class="p-3 bg-zinc-950 border border-zinc-900 rounded-lg flex flex-col justify-between h-20 shadow-inner select-none font-mono">
+                <span class="text-[10px] font-bold text-zinc-555 uppercase tracking-wider font-bold">Holes Recorded</span>
+                <span class="text-xl font-black text-white">${playedHoles}</span>
+              </div>
+              <div class="p-3 bg-zinc-950 border border-zinc-900 rounded-lg flex flex-col justify-between h-20 shadow-inner select-none font-mono font-bold">
+                <span class="text-[10px] font-bold text-zinc-500 uppercase tracking-wider">Avg Round Score</span>
+                <span class="text-xl font-black text-volt">${average}</span>
+              </div>
+              <div class="p-3 bg-zinc-950 border border-zinc-900 rounded-lg flex flex-col justify-between h-20 shadow-inner select-none font-mono font-bold">
+                <span class="text-[10px] font-bold text-zinc-500 uppercase tracking-wider">Avg vs Par</span>
+                <span class="text-xl font-black text-indigo-400">${relToParLabel}</span>
+              </div>
+            </div>
+          `;
+        } else {
+          cumBox.classList.add('hidden');
+          exportAllBtn.classList.add('hidden');
+        }
+
+
+        // Tournaments historical vault collection cards HTML
+        const archiveGrid = document.getElementById('list-saved-history-grid');
+        if (state.rounds.length === 0) {
+          archiveGrid.className = "flex flex-col items-center justify-center p-8 border border-dashed border-zinc-800 rounded-xl bg-zinc-950 mt-2 text-center gap-2 max-w-xl mx-auto";
+          archiveGrid.innerHTML = `
+            <span class="text-2xl select-none leading-none block">🏆</span>
+            <div class="space-y-1">
+              <h4 class="font-sans font-extrabold text-sm text-white uppercase tracking-wider">Vault database empty</h4>
+              <p class="text-xs text-zinc-505 max-w-sm leading-relaxed">Matches you complete inside the Play dashboard will archive securely to this browser's cumulative vault history list!</p>
+            </div>
+            <button onclick="switchTab('setup')" class="px-4 py-2 text-xs font-black text-black bg-volt hover:bg-volt-hover rounded-lg uppercase mt-2 font-sans cursor-pointer font-bold">Start Game Session</button>
+          `;
+        } else {
+          archiveGrid.className = "grid grid-cols-1 md:grid-cols-2 gap-4 mt-2";
+          archiveGrid.innerHTML = state.rounds.map(round => {
+            let winPl = "-";
+            let bestStroke = Infinity;
+
+            round.players.forEach(p => {
+              const { totalGross } = getSubtotals(round, p.id);
+              const playedScoresVal = Object.values(round.scores[p.id] || {}).reduce((total, score) => total + score, 0);
+              if (playedScoresVal > 0 && totalGross < bestStroke) {
+                bestStroke = totalGross;
+                winPl = p.name;
+              }
+            });
+
+            const isFocused = activeResultsRound?.id === round.id;
+
+            return `
+              <div class="p-4 bg-cybercard border rounded-xl shadow-md flex flex-col justify-between gap-3 transition-colors hover:border-volt/25 ${isFocused ? 'border-volt/35 shadow-volt/5 ring-1 ring-volt/10' : !round.completed ? 'border-dashed border-amber-900 bg-amber-955/5' : 'border-zinc-850'}" id="history-round-card-${round.id}">
+                <div class="space-y-1">
+                  <div class="flex items-start justify-between gap-2">
+                    <h4 class="font-sans font-black text-base text-zinc-100 uppercase truncate max-w-[170px] flex items-center gap-1">
+                      <span>📍</span>
+                      <span>${round.courseName}</span>
+                    </h4>
+                    ${round.completed ? 
+                      '<span class="text-[9px] font-mono font-black text-emerald-400 bg-emerald-950/20 px-2 py-0.5 rounded border border-emerald-900/30">ARCHIVED</span>' : 
+                      '<span class="text-[9px] font-mono font-black text-amber-500 bg-amber-950/20 px-2 py-0.5 rounded border border-amber-950/30 animate-pulse">IN PLAY</span>'
+                    }
+                  </div>
+
+                  <p class="text-[11px] font-mono font-bold text-zinc-500 uppercase tracking-wide">
+                    ${round.date} • ${round.holesCount} Holes
+                  </p>
+                </div>
+
+                <div class="space-y-1.5 pt-1">
+                  <span class="text-[9px] font-extrabold text-zinc-550 uppercase tracking-wider block font-mono">SCORES ROSTER:</span>
+                  <div class="flex flex-wrap gap-1.5">
+                    ${round.players.map(p => {
+                      const { totalGross } = getSubtotals(round, p.id);
+                      return `
+                        <div class="text-[11px] bg-zinc-950 border border-zinc-900 px-2.5 py-1 rounded-lg flex items-center gap-1.5 text-zinc-300 font-mono">
+                          <span class="text-volt leading-none font-black text-xs">👤</span>
+                          <span class="font-semibold">${p.name}</span>
+                          <span class="font-extrabold text-white bg-zinc-900 px-1 py-0.5 rounded text-[10px]">${totalGross}</span>
+                        </div>
+                      `;
+                    }).join('')}
+                  </div>
+                </div>
+
+                <div class="flex items-center justify-between border-t border-zinc-900 pt-2 px-0.5 mt-1">
+                  ${round.completed && winPl !== "-" ? `
+                    <div class="flex items-center gap-1 text-[11px] text-volt bg-zinc-950 px-2.5 py-0.5 rounded border border-volt/10 shrink-0">
+                      🏅 <span class="font-bold text-white uppercase">${winPl}</span> (${bestStroke} strokes)
+                    </div>
+                  ` : `
+                    <div class="text-[9px] font-extrabold font-mono text-zinc-655 tracking-wider font-bold">LIVE RECORD MODE</div>
+                  `}
+
+                  <div class="flex items-center gap-1.5 shrink-0">
+                    <button onclick="focusRoundResults('${round.id}')" class="text-[10px] font-mono px-2 py-1 rounded border uppercase font-bold cursor-pointer transition-all ${isFocused ? 'bg-volt text-black border-volt' : 'bg-zinc-900 text-zinc-400 border-zinc-800 hover:text-white'}">
+                      Open 📊
+                    </button>
+                    <button onclick="deleteRoundArchive('${round.id}')" class="p-1 text-rose-500 hover:text-rose-400 rounded hover:bg-zinc-900 border border-zinc-850 hover:border-rose-950/40 cursor-pointer select-none" aria-label="Erase">
+                      ✕
+                    </button>
+                  </div>
+                </div>
+              </div>
+            `;
+          }).join('');
+        }
+      }
+
+      // Live export CSV compilation handles (all handicaps removed)
+      function exportActiveRoundCSV() {
+        const active = getActiveRound();
+        if (!active) return;
+        
+        let csvContent = "";
+        csvContent += `Course Name,${active.courseName}\n`;
+        csvContent += `Date,${active.date}\n`;
+        csvContent += `Holes Count,${active.holesCount}\n\n`;
+
+        const holeHeaders = Array.from({ length: active.holesCount }, (_, i) => `Hole ${i+1}`).join(",");
+        csvContent += `Player Name,${holeHeaders},Total Score,Total Par,Total Difference\n`;
+
+        const parValues = Array.from({ length: active.holesCount }, (_, h) => active.pars[h+1] || 4).join(",");
+        const totalParsSum = Object.values(active.pars).reduce((a, b) => a + b, 0);
+        csvContent += `Course Par,${parValues},${totalParsSum},,\n`;
+
+        active.players.forEach((player) => {
+          const scoreValues = Array.from({ length: active.holesCount }, (_, h) => {
+            const sc = active.scores[player.id]?.[h+1];
+            return sc && sc > 0 ? sc : "";
+          }).join(",");
+          const { totalGross } = getSubtotals(active, player.id);
+          const diff = totalGross - totalParsSum;
+          const diffStr = diff === 0 ? "E" : diff > 0 ? `+${diff}` : diff;
+          csvContent += `"${player.name.replace(/"/g, '""')}",${scoreValues},${totalGross},${totalParsSum},${diffStr}\n`;
+        });
+
+        downloadCSV(csvContent, `leaderboard9000_${active.courseName.toLowerCase().replace(/\s+/g, '_')}.csv`);
+      }
+
+      function exportHistoricalCSV() {
+        if (state.rounds.length === 0) return;
+        
+        let csvContent = "LEADERBOARD9000 Cumulative History Summary\n\n";
+        
+        state.rounds.forEach((round, index) => {
+          csvContent += `ROUND ${index+1}: ${round.courseName} (${round.date})\n`;
+          const holeHeaders = Array.from({ length: round.holesCount }, (_, i) => `H${i+1}`).join(",");
+          csvContent += `Player Name,${holeHeaders},Total Score,Completed\n`;
+          
+          round.players.forEach((player) => {
+            const scoresString = Array.from({ length: round.holesCount }, (_, h) => {
+              const sc = round.scores[player.id]?.[h+1];
+              return sc && sc > 0 ? sc : "-";
+            }).join(",");
+            const { totalGross } = getSubtotals(round, player.id);
+            csvContent += `"${player.name.replace(/"/g, '""')}",${scoresString},${totalGross},${round.completed ? "YES" : "NO"}\n`;
+          });
+          csvContent += "\n";
+        });
+
+        downloadCSV(csvContent, "leaderboard9000_history.csv");
+      }
+
+      function downloadCSV(csvString, filename) {
+        const blob = new Blob([csvString], { type: "text/csv;charset=utf-8;" });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement("a");
+        link.href = url;
+        link.setAttribute("download", filename);
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+      }
+
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('sw.js')
+            .then(reg => console.log('Standalone ServiceWorker registration successful with scope: ', reg.scope))
+            .catch(err => console.warn('Standalone ServiceWorker registration failed: ', err));
+        });
+      }
+    </script>
+  </body>
+</html>

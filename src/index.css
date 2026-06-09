@@ -1,0 +1,228 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+  --color-volt: var(--color-volt);
+  --color-volt-hover: var(--color-volt-hover);
+  --color-cyberdark: var(--color-cyberdark);
+  --color-cybercard: var(--color-cybercard);
+  --color-cybercard-hover: var(--color-cybercard-hover);
+}
+
+:root {
+  --color-volt: #ccff00;
+  --color-volt-hover: #bdff00;
+  --color-cyberdark: #0a0b0a;
+  --color-cybercard: #121412;
+  --color-cybercard-hover: #191c19;
+  --theme-glow: rgba(204, 255, 0, 0.25);
+}
+
+[data-theme="fairway"] {
+  --color-volt: #10b981;
+  --color-volt-hover: #059669;
+  --color-cyberdark: #061f12;
+  --color-cybercard: #0c3820;
+  --color-cybercard-hover: #114c2c;
+  --theme-glow: rgba(16, 185, 129, 0.25);
+}
+
+[data-theme="light"] {
+  --color-volt: #0f172a;
+  --color-volt-hover: #1e293b;
+  --color-cyberdark: #f8fafc;
+  --color-cybercard: #ffffff;
+  --color-cybercard-hover: #f1f5f9;
+  --theme-glow: rgba(15, 23, 42, 0.08);
+}
+
+body {
+  background-color: var(--color-cyberdark);
+  color: #ffffff;
+  transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+}
+
+/* ==========================================
+   ADVANCED GLOBAL LIGHT THEME CSS OVERRIDES
+   ========================================== */
+[data-theme="light"] body {
+  color: #0f172a !important;
+}
+
+[data-theme="light"] .text-white,
+[data-theme="light"] h1,
+[data-theme="light"] h2,
+[data-theme="light"] h3,
+[data-theme="light"] h4,
+[data-theme="light"] h5,
+[data-theme="light"] h6,
+[data-theme="light"] td,
+[data-theme="light"] th,
+[data-theme="light"] .font-black {
+  color: #0f172a !important;
+}
+
+[data-theme="light"] p,
+[data-theme="light"] .text-zinc-350,
+[data-theme="light"] .text-zinc-300,
+[data-theme="light"] .text-zinc-400 {
+  color: #334155 !important;
+}
+
+[data-theme="light"] .text-zinc-450,
+[data-theme="light"] .text-zinc-500,
+[data-theme="light"] .text-zinc-600 {
+  color: #475569 !important;
+}
+
+[data-theme="light"] .text-zinc-650,
+[data-theme="light"] .text-zinc-700 {
+  color: #64748b !important;
+}
+
+[data-theme="light"] .text-volt {
+  color: #15803d !important; /* High contrast rich green text for volt badges/subcategories */
+}
+
+/* Setup & Play components white background structures */
+[data-theme="light"] .bg-cybercard {
+  background-color: #ffffff !important;
+  border-color: #cbd5e1 !important;
+}
+
+[data-theme="light"] .bg-zinc-950,
+[data-theme="light"] .bg-zinc-955,
+[data-theme="light"] .bg-zinc-905,
+[data-theme="light"] #live-scorecard-table-scroll,
+[data-theme="light"] #holes-horizontal-scroll {
+  background-color: #f1f5f9 !important;
+}
+
+[data-theme="light"] .border-zinc-800,
+[data-theme="light"] .border-zinc-805,
+[data-theme="light"] .border-zinc-850,
+[data-theme="light"] .border-zinc-855,
+[data-theme="light"] .border-zinc-900,
+[data-theme="light"] .border-zinc-950 {
+  border-color: #cbd5e1 !important;
+}
+
+/* Inputs and Forms customization */
+[data-theme="light"] input,
+[data-theme="light"] textarea {
+  background-color: #ffffff !important;
+  border-color: #cbd5e1 !important;
+  color: #0f172a !important;
+}
+
+[data-theme="light"] input::placeholder {
+  color: #94a3b8 !important;
+}
+
+/* Sub-card utility nodes (like course presets / recent list buttons) */
+[data-theme="light"] .bg-zinc-900,
+[data-theme="light"] .bg-zinc-910 {
+  background-color: #f8fafc !important;
+  border-color: #cbd5e1 !important;
+  color: #0f172a !important;
+}
+
+[data-theme="light"] .bg-zinc-900:hover,
+[data-theme="light"] .bg-zinc-910:hover {
+  background-color: #f1f5f9 !important;
+}
+
+/* Button & primary interactivity overrides */
+[data-theme="light"] button {
+  color: #0f172a !important;
+}
+
+[data-theme="light"] button svg {
+  stroke: #0f172a !important;
+}
+
+[data-theme="light"] button.bg-volt,
+[data-theme="light"] #btn-start-game,
+[data-theme="light"] #hlight-next-hole-cta {
+  background-color: #0f172a !important;
+  color: #ffffff !important;
+  border-color: #0f172a !important;
+}
+
+[data-theme="light"] button.bg-volt:hover,
+[data-theme="light"] #btn-start-game:hover,
+[data-theme="light"] #hlight-next-hole-cta:hover {
+  background-color: #1e293b !important;
+}
+
+[data-theme="light"] button.bg-volt svg,
+[data-theme="light"] #btn-start-game svg {
+  stroke: #ffffff !important;
+}
+
+[data-theme="light"] button:disabled,
+[data-theme="light"] button:disabled svg {
+  color: #94a3b8 !important;
+  background-color: #f1f5f9 !important;
+  stroke: #94a3b8 !important;
+  border-color: #e2e8f0 !important;
+}
+
+[data-theme="light"] .text-rose-505,
+[data-theme="light"] .text-red-400,
+[data-theme="light"] .text-rose-450 {
+  color: #ef4444 !important;
+}
+
+[data-theme="light"] .bg-rose-955\/10 {
+  background-color: #fee2e2 !important; /* light red */
+}
+
+[data-theme="light"] .bg-amber-955\/10,
+[data-theme="light"] .bg-amber-955\/40 {
+  background-color: #fef3c7 !important; /* light orange */
+}
+
+[data-theme="light"] .bg-green-950\/40,
+[data-theme="light"] .bg-green-950\/20 {
+  background-color: #dcfce7 !important; /* light green */
+}
+
+[data-theme="light"] .bg-indigo-950\/40,
+[data-theme="light"] .bg-indigo-950\/20 {
+  background-color: #e0e7ff !important; /* light blue indigo */
+}
+
+[data-theme="light"] .bg-zinc-950\/20 {
+  background-color: #f8fafc !important;
+}
+
+[data-theme="light"] .border-volt,
+[data-theme="light"] button.border-volt,
+[data-theme="light"] .bg-zinc-900.border-volt,
+[data-theme="light"] .bg-zinc-950.border-volt {
+  background-color: #0f172a !important;
+  border-color: #0f172a !important;
+  color: #ffffff !important;
+}
+
+[data-theme="light"] .border-volt *,
+[data-theme="light"] button.border-volt * {
+  color: #ffffff !important;
+}
+
+/* Perfect contrast and readability for winner score cell under light theme */
+[data-theme="light"] td.winner-score-cell,
+[data-theme="light"] td.bg-volt {
+  background-color: #0f172a !important;
+  color: #ffffff !important;
+}
+
+[data-theme="light"] td.winner-score-cell span,
+[data-theme="light"] td.winner-score-cell *,
+[data-theme="light"] td.bg-volt span,
+[data-theme="light"] td.bg-volt * {
+  color: #94a3b8 !important;
+}
+

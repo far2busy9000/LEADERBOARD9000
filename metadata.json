@@ -1,0 +1,6 @@
+{
+  "name": "LEADERBOARD9000",
+  "description": "Electric, high-energy golf & mini-golf live score tracker. Optimized for fast touch entry with recent player presets and portable offline PWA capability.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
